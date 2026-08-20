@@ -15,6 +15,16 @@ export async function decideRegistration(id, decision) {
   return data;
 }
 
+export async function setAgentActive(id, isActive) {
+  const { data } = await api.patch(`/admin/agents/${id}/active`, { isActive });
+  return data;
+}
+
+export async function resetAgentPassword(id, newPassword) {
+  const { data } = await api.patch(`/admin/agents/${id}/reset-password`, { newPassword });
+  return data;
+}
+
 export async function getAllActivity() {
   const { data } = await api.get('/admin/activity');
   return data;
