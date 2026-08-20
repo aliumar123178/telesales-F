@@ -44,7 +44,7 @@ export default function Login() {
         <div className="w-14 h-14 rounded-2xl bg-brand-500 flex items-center justify-center mb-4">
           <Radio size={26} className="text-white" strokeWidth={2.5} />
         </div>
-        <h1 className="font-display text-2xl font-semibold text-ink">Nexora Telesales</h1>
+        <h1 className="font-display text-2xl font-semibold text-ink">Addis Telesales</h1>
         <p className="text-slate-500 text-sm mt-1">Sign in to your agent workspace</p>
       </div>
 
