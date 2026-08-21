@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Camera, RotateCcw, CheckCircle2 } from 'lucide-react';
 import Input from '../components/common/Input.jsx';
+import Select from '../components/common/Select.jsx';
 import Button from '../components/common/Button.jsx';
 import WizardProgress from '../components/common/WizardProgress.jsx';
 import CameraCapture from '../components/common/CameraCapture.jsx';
 import { lookupExistingCustomer } from '../services/subscriberService.js';
 import { useToast } from '../hooks/useToast.js';
+import { REGIONS, getZones, getWoredas } from '../utils/ethiopiaLocations.js';
 
 const WIZARD_STEPS = ['Customer', 'Offer', 'Confirm'];
 
@@ -22,7 +24,13 @@ const newCustomerSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
   phone: z.string().min(9, 'Enter a valid phone number'),
   idNumber: z.string().min(4, 'ID number is required'),
-  address: z.string().min(2, 'Address is required'),
+  address: z.string().min(2, 'Street/house address is required'),
+  region: z.string().min(1, 'Region is required'),
+  zone: z.string().min(1, 'Zone is required'),
+  woreda: z.string().min(1, 'Woreda is required'),
+  kebele: z.string().min(1, 'Kebele is required'),
+  emergencyContactName: z.string().min(2, 'Emergency contact name is required'),
+  emergencyContactPhone: z.string().min(9, 'Enter a valid emergency contact phone number'),
 });
 
 export default function NewSubscriber() {
@@ -39,8 +47,23 @@ export default function NewSubscriber() {
   const {
     register,
     handleSubmit,
+    control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({ resolver: zodResolver(newCustomerSchema) });
+
+  const selectedRegion = watch('region');
+  const selectedZone = watch('zone');
+
+  useEffect(() => {
+    setValue('zone', '');
+    setValue('woreda', '');
+  }, [selectedRegion, setValue]);
+
+  useEffect(() => {
+    setValue('woreda', '');
+  }, [selectedZone, setValue]);
 
   const handleSearch = async () => {
     setSearchError('');
@@ -68,7 +91,9 @@ export default function NewSubscriber() {
       showToast('Capture a customer photo to continue', 'error');
       return;
     }
-    navigate('/services/primary-offer', { state: { customer: { ...values, photo: customerPhoto } } });
+    navigate('/services/primary-offer', {
+      state: { customer: { ...values, country: 'Ethiopia', photo: customerPhoto } },
+    });
   };
 
   const handlePhotoCaptured = (dataUrl) => {
@@ -117,7 +142,54 @@ export default function NewSubscriber() {
           <Input label="Full name" placeholder="Customer's full name" error={errors.fullName?.message} {...register('fullName')} />
           <Input label="Phone number" placeholder="09XXXXXXXX" error={errors.phone?.message} {...register('phone')} />
           <Input label="ID number" placeholder="National ID or passport no." error={errors.idNumber?.message} {...register('idNumber')} />
-          <Input label="Address" placeholder="Region, city, sub-city" error={errors.address?.message} {...register('address')} />
+
+          <div>
+            <p className="text-sm font-medium text-ink mb-1.5">Location</p>
+            <div className="grid grid-cols-2 gap-3">
+              <Select label="Region" error={errors.region?.message} {...register('region')}>
+                <option value="">Select region</option>
+                {REGIONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </Select>
+              <Select label="Zone" error={errors.zone?.message} disabled={!selectedRegion} {...register('zone')}>
+                <option value="">Select zone</option>
+                {getZones(selectedRegion).map((z) => (
+                  <option key={z} value={z}>{z}</option>
+                ))}
+              </Select>
+              <Select label="Woreda" error={errors.woreda?.message} disabled={!selectedZone} {...register('woreda')}>
+                <option value="">Select woreda</option>
+                {getWoredas(selectedRegion, selectedZone).map((w) => (
+                  <option key={w} value={w}>{w}</option>
+                ))}
+              </Select>
+              <Input label="Kebele" placeholder="e.g. 07" error={errors.kebele?.message} {...register('kebele')} />
+            </div>
+          </div>
+
+          <Input label="Street / house address" placeholder="House no., street, landmark" error={errors.address?.message} {...register('address')} />
+
+          <div>
+            <p className="text-sm font-medium text-ink mb-1.5">Emergency contact / representative</p>
+            <p className="text-xs text-slate-400 mb-3">
+              Who should we reach out to if there's ever an issue with this line?
+            </p>
+            <div className="space-y-3">
+              <Input
+                label="Contact name"
+                placeholder="e.g. Ali"
+                error={errors.emergencyContactName?.message}
+                {...register('emergencyContactName')}
+              />
+              <Input
+                label="Contact phone number"
+                placeholder="09XXXXXXXX"
+                error={errors.emergencyContactPhone?.message}
+                {...register('emergencyContactPhone')}
+              />
+            </div>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-ink mb-1.5">Customer photo</label>

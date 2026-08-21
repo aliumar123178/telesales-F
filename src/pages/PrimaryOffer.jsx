@@ -9,11 +9,18 @@ import WizardProgress from '../components/common/WizardProgress.jsx';
 
 const PAYMENT_TYPES = ['Prepaid', 'Postpaid'];
 const WIZARD_STEPS = ['Customer', 'Offer', 'Confirm'];
+const NUMBER_TIERS = [
+  { value: 'NORMAL', label: 'Normal', tint: 'border-slate-200 bg-white' },
+  { value: 'SILVER', label: 'Silver', tint: 'border-slate-300 bg-slate-50' },
+  { value: 'GOLD', label: 'Gold', tint: 'border-warning bg-warning/5' },
+  { value: 'ICCD', label: 'ICCD', tint: 'border-info bg-info/5' },
+];
 
 export default function PrimaryOffer() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [paymentType, setPaymentType] = useState('Prepaid');
+  const [numberTier, setNumberTier] = useState('NORMAL');
   const [offers, setOffers] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -39,7 +46,7 @@ export default function PrimaryOffer() {
 
   const handleNext = () => {
     navigate('/services/primary-offer/supplementary', {
-      state: { customer: state?.customer, paymentType, offer: selectedOffer },
+      state: { customer: state?.customer, paymentType, offer: selectedOffer, numberTier },
     });
   };
 
@@ -62,6 +69,24 @@ export default function PrimaryOffer() {
               />
               <span className="text-sm text-ink">{type}</span>
             </label>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-ink mb-2">Number tier</p>
+        <div className="grid grid-cols-4 gap-2">
+          {NUMBER_TIERS.map(({ value, label, tint }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setNumberTier(value)}
+              className={`rounded-lg border py-2.5 text-xs font-medium text-center transition-colors ${tint} ${
+                numberTier === value ? 'ring-2 ring-brand-500' : ''
+              }`}
+            >
+              {label}
+            </button>
           ))}
         </div>
       </div>

@@ -23,9 +23,10 @@ export default function SupplementaryOffer() {
         customer: state?.customer,
         paymentType: state?.paymentType,
         offerId: state?.offer?.id,
+        numberTier: state?.numberTier,
       });
       setDone(true);
-      showToast('Registration submitted successfully', 'success');
+      showToast('Submitted — approval decision will arrive shortly', 'success');
     } catch {
       showToast('Could not submit registration. Try again.', 'error');
     } finally {
@@ -39,7 +40,8 @@ export default function SupplementaryOffer() {
         <CheckCircle2 size={40} className="text-success" />
         <p className="font-display font-semibold text-ink text-lg">Registration submitted</p>
         <p className="text-slate-500 text-sm max-w-xs">
-          The new subscriber record has been created and sent for processing.
+          The record has been created and is under review. You'll get an approval or rejection
+          notice — with a reason if rejected — on the Messages tab and by SMS within about 30 seconds.
         </p>
         <Button onClick={() => navigate('/')} className="mt-4 max-w-xs">
           Back to home
@@ -54,6 +56,7 @@ export default function SupplementaryOffer() {
       <Card className="shadow-none border border-slate-100">
         <p className="text-sm text-slate-500 mb-1">Customer</p>
         <p className="font-medium text-ink">{state?.customer?.fullName || '—'}</p>
+        <p className="text-sm text-slate-500 mt-1">{state?.customer?.phone}</p>
       </Card>
       {state?.customer?.photo && (
         <Card className="shadow-none border border-slate-100">
@@ -65,10 +68,34 @@ export default function SupplementaryOffer() {
           />
         </Card>
       )}
+      {(state?.customer?.region || state?.customer?.address) && (
+        <Card className="shadow-none border border-slate-100">
+          <p className="text-sm text-slate-500 mb-1">Location</p>
+          <p className="font-medium text-ink text-sm">
+            {[state?.customer?.address, state?.customer?.kebele, state?.customer?.woreda, state?.customer?.zone, state?.customer?.region, state?.customer?.country]
+              .filter(Boolean)
+              .join(', ')}
+          </p>
+        </Card>
+      )}
+      {state?.customer?.emergencyContactName && (
+        <Card className="shadow-none border border-slate-100">
+          <p className="text-sm text-slate-500 mb-1">Emergency contact</p>
+          <p className="font-medium text-ink text-sm">
+            {state.customer.emergencyContactName} — {state.customer.emergencyContactPhone}
+          </p>
+        </Card>
+      )}
       <Card className="shadow-none border border-slate-100">
         <p className="text-sm text-slate-500 mb-1">Payment type</p>
         <p className="font-medium text-ink">{state?.paymentType || '—'}</p>
       </Card>
+      {state?.numberTier && (
+        <Card className="shadow-none border border-slate-100">
+          <p className="text-sm text-slate-500 mb-1">Number tier</p>
+          <p className="font-medium text-ink">{state.numberTier}</p>
+        </Card>
+      )}
       <Card className="shadow-none border border-slate-100">
         <p className="text-sm text-slate-500 mb-1">Primary offer</p>
         <p className="font-medium text-ink">{state?.offer?.name || '—'}</p>
