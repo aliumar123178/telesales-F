@@ -50,7 +50,7 @@ export default function Signup() {
     <div className="min-h-screen flex flex-col justify-center px-6 py-10 max-w-md mx-auto">
       <div className="mb-8">
         <h1 className="font-display text-2xl font-semibold text-ink">Create your account</h1>
-        <p className="text-slate-500 text-sm mt-1">Set up agent access for Nexora Telesales</p>
+        <p className="text-slate-500 text-sm mt-1">Set up agent access for Addis Telesales</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
