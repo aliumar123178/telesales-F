@@ -54,9 +54,9 @@ export default function Signup() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input label="Full name" icon={User} placeholder="Jane Doe" error={errors.fullName?.message} {...register('fullName')} />
+        <Input label="Full name" icon={User} placeholder="Ali" error={errors.fullName?.message} {...register('fullName')} />
         <Input label="Username" icon={User} placeholder="Choose a username" error={errors.username?.message} {...register('username')} />
-        <Input label="Email" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} {...register('email')} />
+        <Input label="Email" type="email" icon={Mail} placeholder="email" error={errors.email?.message} {...register('email')} />
         <Input label="Password" type="password" icon={Lock} placeholder="Create a password" error={errors.password?.message} {...register('password')} />
         <Input label="Confirm password" type="password" icon={Lock} placeholder="Re-enter password" error={errors.confirmPassword?.message} {...register('confirmPassword')} />
 
